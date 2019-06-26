@@ -21,15 +21,23 @@ public class JelasticSimpleApp {
     @Configuration
     public static class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
+        private final Globals globals;
+
+        public SpringSecurityConfig(Globals globals) {
+            this.globals = globals;
+        }
+
         @Override
         protected void configure(HttpSecurity http) throws Exception {
 
             http
                     .authorizeRequests()
                     .antMatchers("/**/**").permitAll()
-                    .and()
-                    .requiresChannel().antMatchers("/**").requiresSecure()
             ;
+            if (globals.isSslRequired) {
+                http.requiresChannel().antMatchers("/**").requiresSecure();
+            }
+
         }
     }
     @RequestMapping("/")
